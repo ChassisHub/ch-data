@@ -1,94 +1,127 @@
-import find from "lodash/find";
-import flatten from "lodash/flatten";
-import invert from "lodash/invert";
-import kebabCase from "lodash/kebabCase";
-import memoize from "lodash/memoize";
-import pluck from "lodash/map";
-import snakeCase from "lodash/snakeCase";
-import zip from "lodash/zip";
+"use strict";
 
-import locations from "./locations";
-import manufacturers from "./manufacturers";
-import models from "./trucks";
-import states from "./states";
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.locations = exports.states = exports.models = exports.manufacturers = exports.allVehicleTypes = exports.getBodyTypes = exports.allAvailableBodyTypes = exports.getModel = exports.isOBDEnabled = exports.getOBDEnabledModels = exports.getStateName = exports.getStateCode = undefined;
+
+var _find = require("lodash/find");
+
+var _find2 = _interopRequireDefault(_find);
+
+var _flatten = require("lodash/flatten");
+
+var _flatten2 = _interopRequireDefault(_flatten);
+
+var _invert = require("lodash/invert");
+
+var _invert2 = _interopRequireDefault(_invert);
+
+var _kebabCase = require("lodash/kebabCase");
+
+var _kebabCase2 = _interopRequireDefault(_kebabCase);
+
+var _memoize = require("lodash/memoize");
+
+var _memoize2 = _interopRequireDefault(_memoize);
+
+var _map = require("lodash/map");
+
+var _map2 = _interopRequireDefault(_map);
+
+var _snakeCase = require("lodash/snakeCase");
+
+var _snakeCase2 = _interopRequireDefault(_snakeCase);
+
+var _zip = require("lodash/zip");
+
+var _zip2 = _interopRequireDefault(_zip);
+
+var _locations = require("./locations");
+
+var _locations2 = _interopRequireDefault(_locations);
+
+var _manufacturers = require("./manufacturers");
+
+var _manufacturers2 = _interopRequireDefault(_manufacturers);
+
+var _trucks = require("./trucks");
+
+var _trucks2 = _interopRequireDefault(_trucks);
+
+var _states = require("./states");
+
+var _states2 = _interopRequireDefault(_states);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Conditionally require jquery
-let hasWindow = (typeof window !== "undefined");
+var hasWindow = typeof window !== "undefined";
 
-if ( hasWindow ) {
-  let
-    $ = window.jQuery || window.$,
-    hasCloudinary = $ && $.cloudinary;
+if (hasWindow) {
+  (function () {
+    var $ = window.jQuery || window.$,
+        hasCloudinary = $ && $.cloudinary;
 
-  // Pre process
-  $( () => {
-    manufacturers.forEach( m => {
-      hasCloudinary && (
-        m.logo = $.cloudinary.url( m.logo, { transformation: ["model_image"]})
-      );
+    // Pre process
+    $(function () {
+      _manufacturers2.default.forEach(function (m) {
+        hasCloudinary && (m.logo = $.cloudinary.url(m.logo, { transformation: ["model_image"] }));
 
-      m.slug = snakeCase( m.name )
-      m.icon = kebabCase( m.slug )
+        m.slug = (0, _snakeCase2.default)(m.name);
+        m.icon = (0, _kebabCase2.default)(m.slug);
+      });
+
+      hasCloudinary && _trucks2.default.forEach(function (m) {
+        if (!!m.image) m.image = $.cloudinary.url(m.image, { transformation: ["model_image"] });
+      });
     });
-
-    hasCloudinary && models.forEach( m => {
-      if ( !!m.image )
-        m.image = $.cloudinary.url( m.image, { transformation: ["model_image"]});
-    });
- });
-
+  })();
 }
 
 // Calc all available body types
-let allAvailableBodyTypesSet = new Set(
-    flatten( pluck( models, "available_body_types") )
-  ),
-  allVehicleTypesSet = new Set(
-    pluck( models, "type" )
-  );
+var allAvailableBodyTypesSet = new Set((0, _flatten2.default)((0, _map2.default)(_trucks2.default, "available_body_types"))),
+    allVehicleTypesSet = new Set((0, _map2.default)(_trucks2.default, "type"));
 
-export const
-  getStateCode = name => invert( states )[ name ],
-  getStateName = code => states[ code ],
-  getOBDEnabledModels = year => models.filter( model => model.year >= 2010 ),
-  isOBDEnabled = model => model.year >= 2010,
-
-  getModel = memoize(
-    model => find( models, { model })
-  ),
-
-  allAvailableBodyTypes = Array.from( allAvailableBodyTypesSet ),
-
-  getBodyTypes = model => {
-    let found = getModel( model );
-    return found ? found.available_body_types : [];
-  },
-
-  allVehicleTypes = zip(
-    Array.from( allVehicleTypesSet ), [
-
-    // Order matters
-    // Separate icon names
-    "platform-body",
-    "flat-bed-trailer",
-    "tipper",
-    "transit-mixer",
-    "bulker",
-    "tanker",
-    "bus",
-    "bus"
-
-  ]).map( ([name, icon]) => {
-    return {
-      name,
-      slug: snakeCase( name ),
-      icon
-    };
+var getStateCode = exports.getStateCode = function getStateCode(name) {
+  return (0, _invert2.default)(_states2.default)[name];
+},
+    getStateName = exports.getStateName = function getStateName(code) {
+  return _states2.default[code];
+},
+    getOBDEnabledModels = exports.getOBDEnabledModels = function getOBDEnabledModels(year) {
+  return _trucks2.default.filter(function (model) {
+    return model.year >= 2010;
   });
+},
+    isOBDEnabled = exports.isOBDEnabled = function isOBDEnabled(model) {
+  return model.year >= 2010;
+},
+    getModel = exports.getModel = (0, _memoize2.default)(function (model) {
+  return (0, _find2.default)(_trucks2.default, { model: model });
+}),
+    allAvailableBodyTypes = exports.allAvailableBodyTypes = Array.from(allAvailableBodyTypesSet),
+    getBodyTypes = exports.getBodyTypes = function getBodyTypes(model) {
+  var found = getModel(model);
+  return found ? found.available_body_types : [];
+},
+    allVehicleTypes = exports.allVehicleTypes = (0, _zip2.default)(Array.from(allVehicleTypesSet), [
 
-export {
-  manufacturers,
-  models,
-  states,
-  locations
-};
+// Order matters
+// Separate icon names
+"platform-body", "flat-bed-trailer", "tipper", "transit-mixer", "bulker", "tanker", "bus", "bus"]).map(function (_ref) {
+  var name = _ref[0];
+  var icon = _ref[1];
+
+  return {
+    name: name,
+    slug: (0, _snakeCase2.default)(name),
+    icon: icon
+  };
+});
+
+exports.manufacturers = _manufacturers2.default;
+exports.models = _trucks2.default;
+exports.states = _states2.default;
+exports.locations = _locations2.default;
+
