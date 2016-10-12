@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.locations = exports.states = exports.models = exports.manufacturers = exports.allVehicleTypes = exports.getBodyTypes = exports.allAvailableBodyTypes = exports.getModel = exports.isOBDEnabled = exports.getOBDEnabledModels = exports.getStateName = exports.getStateCode = undefined;
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _find = require("lodash/find");
 
 var _find2 = _interopRequireDefault(_find);
@@ -59,24 +61,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var hasWindow = typeof window !== "undefined";
 
 if (hasWindow) {
-  (function () {
+  // Pre process
+  document.addEventListener("DOMContentLoaded", function () {
     var $ = window.jQuery || window.$,
         hasCloudinary = $ && $.cloudinary;
 
-    // Pre process
-    $(function () {
-      _manufacturers2.default.forEach(function (m) {
-        hasCloudinary && (m.logo = $.cloudinary.url(m.logo, { transformation: ["model_image"] }));
+    _manufacturers2.default.forEach(function (m) {
+      hasCloudinary && (m.logo = $.cloudinary.url(m.logo, { transformation: ["model_image"] }));
 
-        m.slug = (0, _snakeCase2.default)(m.name);
-        m.icon = (0, _kebabCase2.default)(m.slug);
-      });
-
-      hasCloudinary && _trucks2.default.forEach(function (m) {
-        if (!!m.image) m.image = $.cloudinary.url(m.image, { transformation: ["model_image"] });
-      });
+      m.slug = (0, _snakeCase2.default)(m.name);
+      m.icon = (0, _kebabCase2.default)(m.slug);
     });
-  })();
+
+    hasCloudinary && _trucks2.default.forEach(function (m) {
+      if (!!m.image) m.image = $.cloudinary.url(m.image, { transformation: ["model_image"] });
+    });
+  });
 }
 
 // Calc all available body types
@@ -110,8 +110,10 @@ var getStateCode = exports.getStateCode = function getStateCode(name) {
 // Order matters
 // Separate icon names
 "platform-body", "flat-bed-trailer", "tipper", "transit-mixer", "bulker", "tanker", "bus", "bus"]).map(function (_ref) {
-  var name = _ref[0];
-  var icon = _ref[1];
+  var _ref2 = _slicedToArray(_ref, 2);
+
+  var name = _ref2[0];
+  var icon = _ref2[1];
 
   return {
     name: name,

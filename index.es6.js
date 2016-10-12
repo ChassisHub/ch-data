@@ -16,12 +16,12 @@ import states from "./states";
 let hasWindow = (typeof window !== "undefined");
 
 if ( hasWindow ) {
-  let
-    $ = window.jQuery || window.$,
-    hasCloudinary = $ && $.cloudinary;
-
   // Pre process
-  $( () => {
+  document.addEventListener("DOMContentLoaded", () => {
+    let
+      $ = window.jQuery || window.$,
+      hasCloudinary = $ && $.cloudinary;
+
     manufacturers.forEach( m => {
       hasCloudinary && (
         m.logo = $.cloudinary.url( m.logo, { transformation: ["model_image"]})
