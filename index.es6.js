@@ -15,29 +15,29 @@ import states from "./states";
 // Conditionally require jquery
 let hasWindow = (typeof window !== "undefined");
 
-if ( hasWindow ) {
-  // Pre process
-  document.addEventListener("DOMContentLoaded", () => {
-    let
-      $ = window.jQuery || window.$,
-      hasCloudinary = $ && $.cloudinary;
+// Pre process
+manufacturers.forEach( m => {
+  m.slug = snakeCase( m.name );
+  m.icon = kebabCase( m.slug );
+});
 
-    manufacturers.forEach( m => {
-      hasCloudinary && (
-        m.logo = $.cloudinary.url( m.logo, { transformation: ["model_image"]})
-      );
+document.addEventListener("DOMContentLoaded", () => {
+  let
+    $ = hasWindow && window.jQuery || window.$,
+    hasCloudinary = $ && $.cloudinary;
 
-      m.slug = snakeCase( m.name )
-      m.icon = kebabCase( m.slug )
-    });
+  if ( !hasCloudinary ) return;
 
-    hasCloudinary && models.forEach( m => {
-      if ( !!m.image )
-        m.image = $.cloudinary.url( m.image, { transformation: ["model_image"]});
-    });
- });
+  manufacturers.forEach( m => {
+    if ( m.logo )
+      m.logo = $.cloudinary.url( m.logo, { transformation: ["model_image"]});
+  });
 
-}
+  hasCloudinary && models.forEach( m => {
+    if ( m.image )
+      m.image = $.cloudinary.url( m.image, { transformation: ["model_image"]});
+  });
+});
 
 // Calc all available body types
 let allAvailableBodyTypesSet = new Set(

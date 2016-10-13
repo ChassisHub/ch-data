@@ -60,24 +60,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // Conditionally require jquery
 var hasWindow = typeof window !== "undefined";
 
-if (hasWindow) {
-  // Pre process
-  document.addEventListener("DOMContentLoaded", function () {
-    var $ = window.jQuery || window.$,
-        hasCloudinary = $ && $.cloudinary;
+// Pre process
+_manufacturers2.default.forEach(function (m) {
+  m.slug = (0, _snakeCase2.default)(m.name);
+  m.icon = (0, _kebabCase2.default)(m.slug);
+});
 
-    _manufacturers2.default.forEach(function (m) {
-      hasCloudinary && (m.logo = $.cloudinary.url(m.logo, { transformation: ["model_image"] }));
+document.addEventListener("DOMContentLoaded", function () {
+  var $ = hasWindow && window.jQuery || window.$,
+      hasCloudinary = $ && $.cloudinary;
 
-      m.slug = (0, _snakeCase2.default)(m.name);
-      m.icon = (0, _kebabCase2.default)(m.slug);
-    });
+  if (!hasCloudinary) return;
 
-    hasCloudinary && _trucks2.default.forEach(function (m) {
-      if (!!m.image) m.image = $.cloudinary.url(m.image, { transformation: ["model_image"] });
-    });
+  _manufacturers2.default.forEach(function (m) {
+    if (m.logo) m.logo = $.cloudinary.url(m.logo, { transformation: ["model_image"] });
   });
-}
+
+  hasCloudinary && _trucks2.default.forEach(function (m) {
+    if (m.image) m.image = $.cloudinary.url(m.image, { transformation: ["model_image"] });
+  });
+});
 
 // Calc all available body types
 var allAvailableBodyTypesSet = new Set((0, _flatten2.default)((0, _map2.default)(_trucks2.default, "available_body_types"))),
