@@ -66,7 +66,7 @@ _manufacturers2.default.forEach(function (m) {
   m.icon = (0, _kebabCase2.default)(m.slug);
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+hasWindow && window.addEventListener("load", function () {
   var $ = hasWindow && window.jQuery || window.$,
       hasCloudinary = $ && $.cloudinary;
 

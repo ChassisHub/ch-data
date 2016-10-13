@@ -21,7 +21,7 @@ manufacturers.forEach( m => {
   m.icon = kebabCase( m.slug );
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+hasWindow && window.addEventListener("load", () => {
   let
     $ = hasWindow && window.jQuery || window.$,
     hasCloudinary = $ && $.cloudinary;
