@@ -11,6 +11,7 @@ import locations from "./locations";
 import manufacturers from "./manufacturers";
 import models from "./trucks";
 import states from "./states";
+import sellListingStates from "./sell_listing_states";
 
 // Conditionally require jquery
 let hasWindow = (typeof window !== "undefined");
@@ -90,5 +91,6 @@ export {
   manufacturers,
   models,
   states,
-  locations
+  locations,
+  sellListingStates
 };
