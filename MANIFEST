@@ -6,5 +6,6 @@ setup.py
 ./manufacturers.json
 ./package.json
 ./schema.json
+./sell_listing_states.json
 ./states.json
 ./trucks.json
